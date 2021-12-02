@@ -60,7 +60,7 @@ class ShortInfo:
                             f"\n Failed tests: {self.failed_test}."
                             f"\n Time: {self.monitor_executingTime} sec."
                             f"\n \n Houston we have a problem!"
-                            f"\n failures {self.failures}" if len(self.failures) > 0 else "")
+                            )
 
             else:
                 return "ше не дороблено!"
@@ -74,7 +74,7 @@ class ShortInfo:
                         f"\n Failed tests: {self.failed_test}."
                         f"\n Time: {self.monitor_executingTime} sec."
                         f"\n \n Houston we have a problem!"
-                        f"\n failures {self.failures}" if len(self.failures) > 0 else "")
+                        )
             else:
                 print("ше не дороблено!")
 

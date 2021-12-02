@@ -4,6 +4,7 @@ import imaplib
 import json
 import logging
 
+import aiogram
 from imbox import Imbox
 from aiogram import Bot, Dispatcher, executor, types
 import sqlite3
@@ -52,43 +53,34 @@ async def change_settings(message: types.Message):
         await message.reply("your settings changed", reply_markup=setting_keyboard(check_user(message)))
     if message.text == "wasd":
         await message.reply("choose your settings", reply_markup=setting_keyboard(check_user(message)))
+    if message.text == "users":
+        await message.reply(*get_all_users())
 
-
-@dp.message_handler(commands=['settings'])
-async def get_users(message: types.Message):
-    await message.reply("choose your settings", reply_markup=setting_keyboard(check_user(message)))
 
 
 async def postman_mailing():
-    print("start postman")
     users = get_all_users()
     response = run_monitor()
     for i in users:
-        if i[4] == 1 and i[5] == 1 and response['run']["info"]["status"] == "failed" and response is not None:
-            await bot.send_message(i[1], return_data(response, i))
-            print("sleep")
-        if i[4] == 1 and i[5] == 0 and response is not None:
-            await bot.send_message(i[1], return_data(response, i))
-            print("sleep")
-        if response is None:
-            await bot.send_message(i[1], "something wrong we will try")
-    print("пошта спить")
+        if i[4] == 1 and i[5] == 1 and response['run']["info"]["status"] == "failed":
+            print("first line")
+            await bot.send_message(i[1], (return_data(response, i) if response is not None else "error"))
+        if i[4] == 1 and i[5] == 0:
+            print("second line")
+            await bot.send_message(i[1], (return_data(response, i) if response is not None else "error"))
     await asyncio.sleep(3600)
 
 
 async def email_mailing():
-    print("start mail")
     print(old_response)
     users = get_all_users()
     one_c = await mail_onec_errors()
     if one_c is not None:
-        print("шось нове")
         for i in users:
             if i[7] == 1:
                 await bot.send_message(i[1], *one_c)
         await asyncio.sleep(1000)
     else:
-        print("нічого нового")
         await asyncio.sleep(1000)
 
 
