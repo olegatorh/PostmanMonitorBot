@@ -3,6 +3,20 @@ import sqlite3
 try:
     sqlite_connection = sqlite3.connect('sqlite_python.db', isolation_level=None, check_same_thread=False)
     cursor = sqlite_connection.cursor()
+    try:
+        sqlite_create_table_query = '''CREATE TABLE users (
+                                            id INTEGER PRIMARY KEY,
+                                            telegram_id TEXT NOT NULL,
+                                            name TEXT NOT NULL,
+                                            joining_date datetime,
+                                            auto_sending Boolean DEFAULT FALSE,
+                                            only_errors Boolean DEFAULT TRUE,
+                                            full_info Boolean DEFAULT FALSE,
+                                            server_update_info Boolean DEFAULT FALSE   
+                                            );'''
+        cursor.execute(sqlite_create_table_query)
+    except Exception as e:
+        print(e)
 
     print("База данных подключена к SQLite")
     sqlite_connection.commit()
@@ -19,14 +33,16 @@ def check_user(message):
     user_info = cursor.execute(
         "SELECT auto_sending, only_errors, full_info, server_update_info FROM users WHERE telegram_id = ?",
         (message["from"].id,)).fetchone()
+    print(user_info)
     if user_info is None:
         cursor.execute(
             "INSERT OR IGNORE INTO users (name, joining_date, telegram_id) VALUES (?, ?, ?)",
             (message['from'].username,
              message.date.strftime('%Y-%m-%d'),
              message['from'].id,))
-        user_info = cursor.execute("SELECT auto_sending, only_errors, full_info, server_update_info FROM users WHERE telegram_id = ?",
-                                   message["from"].id, ).fetchone()
+        user_info = cursor.execute(
+            "SELECT auto_sending, only_errors, full_info, server_update_info FROM users WHERE telegram_id = ?",
+            message["from"].id, ).fetchone()
         return user_info
     else:
         return user_info
