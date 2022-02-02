@@ -1,11 +1,19 @@
-from aiogram.types import KeyboardButton, ReplyKeyboardMarkup
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+
+api_create_or_cancel_kb = InlineKeyboardMarkup().row(
+    InlineKeyboardButton(text='create', callback_data='api_create'),
+    InlineKeyboardButton(text='cancel', callback_data='api_cancel'),
+)
+
+edit_or_delete_api = InlineKeyboardMarkup().row(
+    InlineKeyboardButton(text='edit', callback_data='api_edit'),
+    InlineKeyboardButton(text='delete', callback_data='api_delete'),
+)
 
 
-def setting_keyboard(user_setting_info):
-    button1 = KeyboardButton(f'Auto sending: {bool(user_setting_info[0])}')
-    button2 = KeyboardButton(f'Only errors: {bool(user_setting_info[1])}')
-    button3 = KeyboardButton(f'Full pm info: {bool(user_setting_info[2])}')
-    button4 = KeyboardButton(f'1c server info: {bool(user_setting_info[3])}')
-    settings_keyboard = ReplyKeyboardMarkup().add(
-        button1).add(button2).add(button3).add(button4)
-    return settings_keyboard
+start_kb = ReplyKeyboardMarkup().add(
+    KeyboardButton('create new api'),
+    KeyboardButton('check all api'),
+)
+
+
