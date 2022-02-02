@@ -55,8 +55,11 @@ def get_all_api():
     return cursor.execute("select * from api_list").fetchall()
 
 
+def get_api(api_name):
+    return cursor.execute("select api_name, api_url, notation from api_list where api_name=?", (api_name, ))
+
+
 def delete_api(api_name):
-    print(api_name)
     cursor.execute(f"delete from api_list where api_name=?", (api_name, ))
 
 

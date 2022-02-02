@@ -4,8 +4,8 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery
 
 from create_bot import dp
-from database import add_api_to_database, get_all_api, delete_api
-from keyboards import api_create_or_cancel_kb, edit_or_delete_api
+from database import add_api_to_database, get_all_api, delete_api, get_api
+from keyboards import api_create_or_cancel_kb, edit_or_delete_api, edit_api_kb
 
 
 class API(StatesGroup):
@@ -36,9 +36,8 @@ async def create_new_api(message: Message):
 @dp.message_handler(text="check all api")
 async def check_all_api(message: Message):
     response = get_all_api()
-    print(response)
     [await message.answer(
-        f"{i[1]} \n\nid: {i[0]};\napi name: {i[1]};\napi url: {i[3]};\napi notation: {i[4]};\n\ncreated: {i[2]};",
+        f"{i[1]} \n\nid: {i[0]};\napi name: {i[1]};\napi url: {i[2]};\napi notation: {i[3]};\n\ncreated: {i[4]};",
         reply_markup=edit_or_delete_api) for i in response]
 
 
@@ -76,7 +75,10 @@ async def check_api_callback(callback_query: CallbackQuery):
         delete_api(callback_query.message.text.split(' ')[0])
         await callback_query.message.answer(f"{callback_query.message.text.split(' ')[0]} deleted!")
     if callback_query.data == "api_edit":
-        await callback_query.message.answer("editting")
+        response = get_api(callback_query.message.text.split(' ')[0])
+        [await callback_query.message.answer(i, reply_markup=edit_api_kb(index, i))
+         for index, i in enumerate(*response)]
+
 
 
 @dp.callback_query_handler(text=["api_cancel", "api_create"], state="*")
@@ -91,7 +93,7 @@ async def process_callback_api(callback_query: CallbackQuery, state: FSMContext)
         await callback_query.message.answer(new_api) if type(new_api) == str else (
             await callback_query.message.answer("OK, added")
             , await callback_query.message.answer(
-                f"New API\n\nid: {new_api[0]};\napi name: {new_api[1]};\napi url: {new_api[3]};\napi notation: {new_api[4]};\n\ncreated: {new_api[2]};"))
+                f"New API\n\nid: {new_api[0]};\napi name: {new_api[1]};\napi url: {new_api[2]};\napi notation: {new_api[3]};\n\ncreated: {new_api[4]};"))
 
     if callback_query.data == "api_cancel":
         if current_state is None:

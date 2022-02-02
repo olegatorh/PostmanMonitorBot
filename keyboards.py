@@ -11,9 +11,19 @@ edit_or_delete_api = InlineKeyboardMarkup().row(
 )
 
 
-start_kb = ReplyKeyboardMarkup().add(
-    KeyboardButton('create new api'),
-    KeyboardButton('check all api'),
+start_kb = ReplyKeyboardMarkup(
+    keyboard=[
+        [
+            KeyboardButton('create new api'),
+            KeyboardButton('check all api'),
+        ]
+    ],
+    resize_keyboard=True, one_time_keyboard=True
 )
 
 
+def edit_api_kb(*api_data):
+    print(api_data)
+    return InlineKeyboardMarkup(row_width=1).add(
+            KeyboardButton(f'change_name', callback_data='change_'),
+    )
