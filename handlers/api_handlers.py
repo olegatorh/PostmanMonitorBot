@@ -4,7 +4,7 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.types import Message, CallbackQuery
 
 from create_bot import dp
-from database import add_api_to_database, get_all_api, delete_api, get_api
+from database import add_api_to_database, get_all_api, delete_api
 from keyboards import api_create_or_cancel_kb, edit_or_delete_api, edit_api_kb
 
 
@@ -12,8 +12,13 @@ class API(StatesGroup):
     api_name = State()
     api_url = State()
     api_notation = State()
-    # api_edit = State()
-    # api_delete = State()
+
+
+class ApiEditStuff(StatesGroup):
+    edit_api_name = State()
+    edit_api_url = State()
+    edit_api_notation = State()
+
 
 
 #                                                                                cancel api creating anywhere
@@ -75,10 +80,41 @@ async def check_api_callback(callback_query: CallbackQuery):
         delete_api(callback_query.message.text.split(' ')[0])
         await callback_query.message.answer(f"{callback_query.message.text.split(' ')[0]} deleted!")
     if callback_query.data == "api_edit":
-        response = get_api(callback_query.message.text.split(' ')[0])
-        [await callback_query.message.answer(i, reply_markup=edit_api_kb(index, i))
-         for index, i in enumerate(*response)]
+        await callback_query.message.answer(callback_query.message.text, reply_markup=edit_api_kb)
 
+
+@dp.callback_query_handler(text=["edit_api_name", "edit_api_delete", "edit_api_notation"])
+async def edit_api(callback_query: CallbackQuery):
+    if callback_query.data == "edit_api_name":
+        await API.state =
+    if callback_query.data == "edit_api_delete":
+        await API.next()
+    if callback_query.data == "edit_api_notation":
+        await API.next()
+
+
+@dp.message_handler(state=ApiEditStuff.edit_api_name)
+async def edit_api_name(message: Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['edit_api_name'] = message.text
+    data = await state.get_data()
+    print(f"edit_api_name: {data}")
+
+
+@dp.message_handler(state=ApiEditStuff.edit_api_url)
+async def edit_api_url(message: Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['edit_api_url'] = message.text
+    data = await state.get_data()
+    print(f"edit_api_url: {data}")
+
+
+@dp.message_handler(state=ApiEditStuff.edit_api_notation)
+async def edit_api_notation(message: Message, state: FSMContext):
+    async with state.proxy() as data:
+        data['edit_api_notation'] = message.text
+    data = await state.get_data()
+    print(f"edit_api_notation: {data}")
 
 
 @dp.callback_query_handler(text=["api_cancel", "api_create"], state="*")

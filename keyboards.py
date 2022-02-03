@@ -22,8 +22,8 @@ start_kb = ReplyKeyboardMarkup(
 )
 
 
-def edit_api_kb(*api_data):
-    print(api_data)
-    return InlineKeyboardMarkup(row_width=1).add(
-            KeyboardButton(f'change_name', callback_data='change_'),
-    )
+edit_api_kb = InlineKeyboardMarkup(row_width=1).add(
+    InlineKeyboardButton(text='edit name', callback_data='edit_api_name'),
+    InlineKeyboardButton(text='edit url', callback_data='edit_api_delete'),
+    InlineKeyboardButton(text='edit notation', callback_data='edit_api_notation'),
+)
